@@ -96,4 +96,203 @@
             margin-top: 30px;
             padding: 25px;
             background: linear-gradient(135deg, #19918e 0%, #04383f 100%);
-            </html>
+            border-radius: 15px;
+            color: white;
+            display: none;
+        }
+
+        .results.show {
+            display: block;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .result-row:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .result-label {
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .result-value {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .savings-highlight {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        .savings-highlight .result-label {
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .savings-highlight .result-value {
+            font-size: 32px;
+            color: #ffd700;
+        }
+
+        @media (max-width: 480px) {
+            .calculator-container {
+                padding: 25px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .subtitle {
+                font-size: 16px;
+            }
+
+            .result-value {
+                font-size: 20px;
+            }
+
+            .savings-highlight .result-value {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator-container">
+        <div class="logo">
+            <img src="https://8630368.fs1.hubspotusercontent-na1.net/hubfs/8630368/Nurse%20Academy.png" alt="Nurses & Midwives Academy">
+        </div>
+        <h1>Black Friday Savings Calculator</h1>
+        <div class="subtitle">Save 60% on Nurse Academy Membership</div>
+        
+        <form id="calculatorForm">
+            <div class="form-group">
+                <label for="state">Select Your State</label>
+                <select id="state" required>
+                    <option value="">-- Choose State --</option>
+                    <option value="QLDNT">QLD / NT</option>
+                    <option value="NSWACT">NSW / ACT</option>
+                    <option value="VICTAS">VIC / TAS</option>
+                    <option value="SA">SA</option>
+                    <option value="WA">WA</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="employment">Employment Status</label>
+                <select id="employment" required>
+                    <option value="">-- Choose Status --</option>
+                    <option value="fulltime">Full Time</option>
+                    <option value="parttime">Part Time</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="frequency">Payment Frequency</label>
+                <select id="frequency" required>
+                    <option value="">-- Choose Frequency --</option>
+                    <option value="annual">Annual</option>
+                    <option value="monthly">Monthly</option>
+                    <option value="fortnightly">Fortnightly</option>
+                </select>
+            </div>
+        </form>
+
+        <div id="results" class="results">
+            <div class="result-row">
+                <span class="result-label">Regular Price:</span>
+                <span class="result-value" id="regularPrice">$0.00</span>
+            </div>
+            <div class="result-row">
+                <span class="result-label">Black Friday Price:</span>
+                <span class="result-value" id="blackFridayPrice">$0.00</span>
+            </div>
+            <div class="savings-highlight">
+                <div class="result-label">YOU SAVE</div>
+                <div class="result-value" id="savings">$0.00</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const prices = {
+            QLDNT: {
+                fulltime: { annual: 110, monthly: 10, fortnightly: 5 },
+                parttime: { annual: 110, monthly: 10, fortnightly: 5 }
+            },
+            NSWACT: {
+                fulltime: { annual: 110, monthly: 10, fortnightly: 5 },
+                parttime: { annual: 110, monthly: 10, fortnightly: 5 }
+            },
+            VICTAS: {
+                fulltime: { annual: 55, monthly: 5, fortnightly: 2.50 },
+                parttime: { annual: 55, monthly: 5, fortnightly: 2.50 }
+            },
+            SA: {
+                fulltime: { annual: 110, monthly: 10, fortnightly: 5.62 },
+                parttime: { annual: 110, monthly: 10, fortnightly: 4.62 }
+            },
+            WA: {
+                fulltime: { annual: 27.50, monthly: 2.50, fortnightly: 1.25 },
+                parttime: { annual: 55, monthly: 5, fortnightly: 2.50 }
+            }
+        };
+
+        const stateSelect = document.getElementById('state');
+        const employmentSelect = document.getElementById('employment');
+        const frequencySelect = document.getElementById('frequency');
+        const resultsDiv = document.getElementById('results');
+
+        [stateSelect, employmentSelect, frequencySelect].forEach(select => {
+            select.addEventListener('change', calculateSavings);
+        });
+
+        function calculateSavings() {
+            const state = stateSelect.value;
+            const employment = employmentSelect.value;
+            const frequency = frequencySelect.value;
+
+            if (!state || !employment || !frequency) {
+                resultsDiv.classList.remove('show');
+                return;
+            }
+
+            const regularPrice = prices[state][employment][frequency];
+            const blackFridayPrice = regularPrice * 0.4;
+            const savingsAmount = regularPrice * 0.6;
+
+            document.getElementById('regularPrice').textContent = `$${regularPrice.toFixed(2)}`;
+            document.getElementById('blackFridayPrice').textContent = `$${blackFridayPrice.toFixed(2)}`;
+            document.getElementById('savings').textContent = `$${savingsAmount.toFixed(2)}`;
+
+            resultsDiv.classList.add('show');
+        }
+    </script>
+</body>
+</html>
