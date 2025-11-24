@@ -160,6 +160,27 @@
             color: #ffd700;
         }
 
+        .annual-savings {
+            background: rgba(255, 215, 0, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            text-align: center;
+            border: 2px solid rgba(255, 215, 0, 0.5);
+        }
+
+        .annual-label {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .annual-value {
+            font-size: 26px;
+            font-weight: bold;
+            color: #ffd700;
+        }
+
         @media (max-width: 480px) {
             .calculator-container {
                 padding: 25px;
@@ -237,6 +258,10 @@
                 <div class="result-label">YOU SAVE</div>
                 <div class="result-value" id="savings">$0.00</div>
             </div>
+            <div id="annualSavings" class="annual-savings" style="display: none;">
+                <div class="annual-label">Annual Savings:</div>
+                <div class="annual-value" id="annualSavingsAmount">$0.00</div>
+            </div>
         </div>
     </div>
 
@@ -268,6 +293,7 @@
         const employmentSelect = document.getElementById('employment');
         const frequencySelect = document.getElementById('frequency');
         const resultsDiv = document.getElementById('results');
+        const annualSavingsDiv = document.getElementById('annualSavings');
 
         [stateSelect, employmentSelect, frequencySelect].forEach(select => {
             select.addEventListener('change', calculateSavings);
@@ -290,6 +316,19 @@
             document.getElementById('regularPrice').textContent = `$${regularPrice.toFixed(2)}`;
             document.getElementById('blackFridayPrice').textContent = `$${blackFridayPrice.toFixed(2)}`;
             document.getElementById('savings').textContent = `$${savingsAmount.toFixed(2)}`;
+
+            // Calculate and show annual savings for fortnightly/monthly
+            if (frequency === 'fortnightly') {
+                const annualSavings = savingsAmount * 26; // 26 fortnights in a year
+                document.getElementById('annualSavingsAmount').textContent = `$${annualSavings.toFixed(2)}`;
+                annualSavingsDiv.style.display = 'block';
+            } else if (frequency === 'monthly') {
+                const annualSavings = savingsAmount * 12; // 12 months in a year
+                document.getElementById('annualSavingsAmount').textContent = `$${annualSavings.toFixed(2)}`;
+                annualSavingsDiv.style.display = 'block';
+            } else {
+                annualSavingsDiv.style.display = 'none';
+            }
 
             resultsDiv.classList.add('show');
         }
